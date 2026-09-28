@@ -1,22 +1,25 @@
-"""Điểm bắt đầu của chương trình."""
+"""Điểm bắt đầu của prototype Business Procurement Agent."""
 
-from llm_client import get_llm_response
+import sys
+
+from agent import diagnose_tool_calling
+
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def main() -> None:
-    prompt = (
-        "Bạn có thể tự giới thiệu bản thân không?"
-    )
+    current_user_id = "EMP002"
+    prompt = "Tôi cần mua 5 màn hình 27 inch cho team."
 
-    print("Đang gửi prompt tới LLM...\n")
+    print("=== DIRECT UPSTAGE TOOL CALLING TEST ===")
 
     try:
-        response = get_llm_response(prompt)
-        print(response)
+        diagnose_tool_calling(prompt, current_user_id)
     except Exception as error:
-        print(f"Có lỗi xảy ra: {error}")
+        print(f"\n[AGENT ERROR] {error}")
 
 
 if __name__ == "__main__":
     main()
-

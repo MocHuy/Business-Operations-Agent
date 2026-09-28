@@ -1,0 +1,65 @@
+[
+  {
+    "product_id": "MON-27-001",
+    "name": "ViewPro 27 IPS Monitor",
+    "category": "monitor",
+    "specifications": "27 inch, IPS, 2560x1440, 75Hz",
+    "unit_price": 4200000
+  },
+  {
+    "product_id": "MON-27-002",
+    "name": "OfficeView 27 Monitor",
+    "category": "monitor",
+    "specifications": "27 inch, IPS, 1920x1080, 75Hz",
+    "unit_price": 3200000
+  },
+  {
+    "product_id": "MON-24-001",
+    "name": "OfficeView 24 Monitor",
+    "category": "monitor",
+    "specifications": "24 inch, IPS, 1920x1080, 75Hz",
+    "unit_price": 2500000
+  },
+  {
+    "product_id": "LAP-14-001",
+    "name": "WorkMate 14 Laptop",
+    "category": "laptop",
+    "specifications": "14 inch, Core i5, 16GB RAM, 512GB SSD",
+    "unit_price": 18500000
+  },
+  {
+    "product_id": "LAP-15-001",
+    "name": "WorkMate 15 Laptop",
+    "category": "laptop",
+    "specifications": "15.6 inch, Core i7, 16GB RAM, 512GB SSD",
+    "unit_price": 24500000
+  },
+  {
+    "product_id": "KEY-001",
+    "name": "OfficeType USB Keyboard",
+    "category": "keyboard",
+    "specifications": "full-size, USB, Vietnamese layout",
+    "unit_price": 350000
+  },
+  {
+    "product_id": "KEY-002",
+    "name": "QuietType Wireless Keyboard",
+    "category": "keyboard",
+    "specifications": "full-size, wireless, Vietnamese layout",
+    "unit_price": 650000
+  },
+  {
+    "product_id": "MOU-001",
+    "name": "OfficeClick USB Mouse",
+    "category": "mouse",
+    "specifications": "wired, USB, optical",
+    "unit_price": 180000
+  },
+  {
+    "product_id": "MOU-002",
+    "name": "OfficeClick Wireless Mouse",
+    "category": "mouse",
+    "specifications": "wireless, optical, silent click",
+    "unit_price": 420000
+  }
+]

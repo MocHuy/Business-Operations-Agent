@@ -1,0 +1,1 @@
+export default function StatusBadge({status}){const token=String(status||'unknown').toLowerCase().replace(/[^a-z0-9_-]/g,'-');return <span className={`status-badge status-${token}`}>{status||'—'}</span>}

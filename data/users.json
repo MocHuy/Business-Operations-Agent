@@ -1,0 +1,17 @@
+{
+  "EMP001": {
+    "name": "Nguyễn Văn An",
+    "role": "EMPLOYEE",
+    "department_id": "DEP001"
+  },
+  "EMP002": {
+    "name": "Trần Minh Bình",
+    "role": "EMPLOYEE",
+    "department_id": "DEP002"
+  },
+  "MGR001": {
+    "name": "Lê Thu Hà",
+    "role": "MANAGER",
+    "department_id": "DEP001"
+  }
+}
