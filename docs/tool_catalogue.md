@@ -1,6 +1,6 @@
 # Tool Catalogue
 
-Catalogue này chỉ là specification. Chưa có implementation Python ở MVP hiện tại.
+Ba công cụ **đọc** bên dưới được khai báo ở `tools/tool_registry.py` và thực thi dưới quyền backend trong `procurement_agent.py`. Model chọn công cụ ở runtime; Harness xác thực tên, tham số, phòng ban, timeout và kết quả. Các thao tác ghi ở phần sau là hợp đồng nghiệp vụ/API, không phải công cụ được cấp trực tiếp cho LLM. Phần mô tả cũ của catalogue là thiết kế tham khảo; trạng thái thực thi hiện tại được xác định bằng mã và tests.
 
 ## `get_user_profile()`
 
@@ -23,32 +23,34 @@ Catalogue này chỉ là specification. Chưa có implementation Python ở MVP 
 - **Output**: Danh sách product phù hợp, gồm tối thiểu `product_id`, `name`, `category`, `specifications`, `unit_price`, `total_price`.
 - **Permission**: Employee, Manager; Agent được gọi thay mặt user.
 
-## `get_purchase_request(request_id)`
+## API đọc: `GET /api/procurement/{request_id}`
 
 - **Purpose**: Xem chi tiết và trạng thái một PR.
 - **Input**: `request_id`.
 - **Output**: Chi tiết PR, người tạo, department, sản phẩm, quantity, reason và status.
 - **Permission**: Employee xem PR của mình; Manager xem PR thuộc phạm vi quản lý.
 
-## `create_purchase_request(product_id, quantity, reason)`
+## API ghi: `POST /api/procurement`
 
 - **Purpose**: Tạo PR mới ở trạng thái `DRAFT`.
 - **Input**: `product_id`, `quantity`, `reason`; user và department lấy từ context.
 - **Output**: `request_id`, nội dung PR và status `DRAFT`.
-- **Permission**: Employee; Agent phải gọi qua Harness.
+- **Permission**: Employee hoặc Manager đã đăng nhập; backend yêu cầu `confirmed: true`, kiểm sản phẩm và ngân sách. Model không được gọi API này. Lựa chọn cho phép Manager tạo PR là chính sách demo được ghi ở cuối tài liệu.
 
-## `submit_purchase_request(request_id)`
+## API ghi: `POST /api/procurement/{request_id}/submit`
 
 - **Purpose**: Gửi PR để chờ Manager phê duyệt.
 - **Input**: `request_id`.
 - **Output**: PR đã cập nhật với status `PENDING_APPROVAL`.
-- **Permission**: Employee là người tạo PR; Agent phải gọi qua Harness.
+- **Permission**: Chính người tạo PR (Employee hoặc Manager), với `confirmed: true`; backend kiểm trạng thái và ngân sách.
 
-## `approve_purchase_request(request_id)`
+## API ghi: `POST /api/procurement/{request_id}/decision`
 
-- **Purpose**: Approve một PR hợp lệ.
+- **Purpose**: Duyệt hoặc từ chối một PR đang chờ.
 - **Input**: `request_id`.
-- **Output**: PR đã cập nhật với status `APPROVED`.
-- **Permission**: Chỉ Manager; bắt buộc qua Harness.
+- **Output**: PR đã cập nhật với status `APPROVED` hoặc `REJECTED`.
+- **Permission**: Chỉ Manager cùng phòng ban, không tự duyệt, với `confirmed: true`; backend kiểm trạng thái và ngân sách. `decision` nhận `approve` hoặc `reject`.
 
-> Reject cũng là một nghiệp vụ bắt buộc của MVP và phải được thực hiện qua Harness. Catalogue hiện chưa tách `reject_purchase_request()` thành tool riêng; interface approve/reject cần được chốt khi triển khai.
+Trong triển khai hiện tại, giao diện quyết định của quản lý là `POST /api/procurement/{request_id}/decision` với `decision` bằng `approve` hoặc `reject` và `confirmed: true`; không có mutation tool cho model. Agent proposal được xác nhận qua `POST /api/agent/procurement/{session_id}/confirm`, sau đó backend tạo và gửi PR trong một transaction. Các màn hình tạo thủ công dùng hai API create DRAFT và submit riêng, mỗi bước có xác nhận.
+
+Backend lấy actor từ Bearer session; `user_id`, role, department, giá và status trong prompt/body không được dùng làm nguồn quyền. `procurement_store.py` kiểm lại quyền, giá, ngân sách và trạng thái ở transaction mutation, rồi ghi audit. Lựa chọn Manager có thể tạo PR nhưng không tự duyệt được áp dụng cho demo để phù hợp giao diện cũ; đây là chính sách implementation vì các tài liệu nghiệp vụ trước đó chưa thống nhất quyền tạo PR của Manager.

@@ -1,0 +1,56 @@
+{
+  "scenario": "false_model_success",
+  "root_cause": "Model đề xuất sản phẩm và tự nhận hoàn tất ở bước 1 khi chưa đọc profile, ngân sách hoặc catalogue; verifier từ chối.",
+  "events": [
+    {
+      "event": "input",
+      "details": {
+        "message": "Mua một màn hình.",
+        "phase": "NEW"
+      }
+    },
+    {
+      "event": "state",
+      "details": {
+        "phase": "RUNNING",
+        "step": 1
+      }
+    },
+    {
+      "event": "model",
+      "details": {
+        "step": 1,
+        "type": "final",
+        "pricing_model": "scripted-mock",
+        "prompt_tokens": 80,
+        "completion_tokens": 20,
+        "total_tokens": 100,
+        "estimated_cost_usd": 4.8e-05,
+        "latency_ms": 15
+      }
+    },
+    {
+      "event": "model_final",
+      "details": {
+        "kind": "proposal",
+        "model_message": "Đã hoàn tất."
+      }
+    },
+    {
+      "event": "verification",
+      "details": {
+        "passed": false,
+        "code": "VERIFICATION_FAILED"
+      }
+    },
+    {
+      "event": "failure",
+      "details": {
+        "code": "VERIFICATION_FAILED",
+        "message": "Chưa kiểm tra danh tính từ dữ liệu hệ thống.",
+        "cause_type": "BusinessError",
+        "step": 1
+      }
+    }
+  ]
+}

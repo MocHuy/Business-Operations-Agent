@@ -1,0 +1,174 @@
+{
+  "model": "scripted-mock",
+  "metrics": {
+    "scenario_count": 8,
+    "expected_outcome_rate": 1.0,
+    "successful_workflow_rate": 1.0,
+    "model_calls": 16,
+    "tool_calls": 12,
+    "tool_validated_calls": 10,
+    "tool_rejected_calls": 2,
+    "tool_runtime_errors": 1,
+    "tool_results": 9,
+    "tool_result_rate": 0.75,
+    "input_tokens": 1280,
+    "output_tokens": 320,
+    "model_latency_ms": 45,
+    "estimated_model_cost_usd": 0.000768,
+    "mean_latency_ms": 292.75,
+    "p50_latency_ms": 164.0,
+    "p95_latency_ms": 566.35,
+    "min_latency_ms": 140.0,
+    "max_latency_ms": 594.0
+  },
+  "cases": [
+    {
+      "id": "standard",
+      "tier": "standard",
+      "passed": true,
+      "latency_ms": 515.0,
+      "model_calls": 4,
+      "tool_calls": 3,
+      "tool_validated_calls": 3,
+      "tool_rejected_calls": 0,
+      "tool_runtime_errors": 0,
+      "tool_results": 3,
+      "input_tokens": 320,
+      "output_tokens": 80,
+      "model_latency_ms": 0,
+      "estimated_model_cost_usd": 0.000192,
+      "failure_codes": []
+    },
+    {
+      "id": "missing_quantity",
+      "tier": "edge_failure",
+      "passed": true,
+      "latency_ms": 156.0,
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_validated_calls": 0,
+      "tool_rejected_calls": 0,
+      "tool_runtime_errors": 0,
+      "tool_results": 0,
+      "input_tokens": 80,
+      "output_tokens": 20,
+      "model_latency_ms": 0,
+      "estimated_model_cost_usd": 4.8e-05,
+      "failure_codes": []
+    },
+    {
+      "id": "budget_overrun",
+      "tier": "edge_failure",
+      "passed": true,
+      "latency_ms": 594.0,
+      "model_calls": 4,
+      "tool_calls": 3,
+      "tool_validated_calls": 3,
+      "tool_rejected_calls": 0,
+      "tool_runtime_errors": 0,
+      "tool_results": 3,
+      "input_tokens": 320,
+      "output_tokens": 80,
+      "model_latency_ms": 30,
+      "estimated_model_cost_usd": 0.000192,
+      "failure_codes": [
+        "VERIFICATION_FAILED"
+      ]
+    },
+    {
+      "id": "false_model_success",
+      "tier": "edge_failure",
+      "passed": true,
+      "latency_ms": 156.0,
+      "model_calls": 1,
+      "tool_calls": 0,
+      "tool_validated_calls": 0,
+      "tool_rejected_calls": 0,
+      "tool_runtime_errors": 0,
+      "tool_results": 0,
+      "input_tokens": 80,
+      "output_tokens": 20,
+      "model_latency_ms": 15,
+      "estimated_model_cost_usd": 4.8e-05,
+      "failure_codes": [
+        "VERIFICATION_FAILED"
+      ]
+    },
+    {
+      "id": "invalid_tool_argument",
+      "tier": "edge_failure",
+      "passed": true,
+      "latency_ms": 140.0,
+      "model_calls": 1,
+      "tool_calls": 1,
+      "tool_validated_calls": 0,
+      "tool_rejected_calls": 1,
+      "tool_runtime_errors": 0,
+      "tool_results": 0,
+      "input_tokens": 80,
+      "output_tokens": 20,
+      "model_latency_ms": 0,
+      "estimated_model_cost_usd": 4.8e-05,
+      "failure_codes": [
+        "INVALID_QUANTITY"
+      ]
+    },
+    {
+      "id": "tool_failure",
+      "tier": "edge_failure",
+      "passed": true,
+      "latency_ms": 156.0,
+      "model_calls": 1,
+      "tool_calls": 1,
+      "tool_validated_calls": 1,
+      "tool_rejected_calls": 0,
+      "tool_runtime_errors": 1,
+      "tool_results": 0,
+      "input_tokens": 80,
+      "output_tokens": 20,
+      "model_latency_ms": 0,
+      "estimated_model_cost_usd": 4.8e-05,
+      "failure_codes": [
+        "TOOL_FAILED"
+      ]
+    },
+    {
+      "id": "loop_limit",
+      "tier": "edge_failure",
+      "passed": true,
+      "latency_ms": 453.0,
+      "model_calls": 3,
+      "tool_calls": 3,
+      "tool_validated_calls": 3,
+      "tool_rejected_calls": 0,
+      "tool_runtime_errors": 0,
+      "tool_results": 3,
+      "input_tokens": 240,
+      "output_tokens": 60,
+      "model_latency_ms": 0,
+      "estimated_model_cost_usd": 0.000144,
+      "failure_codes": [
+        "STEP_LIMIT"
+      ]
+    },
+    {
+      "id": "privilege_injection",
+      "tier": "adversarial_security",
+      "passed": true,
+      "latency_ms": 172.0,
+      "model_calls": 1,
+      "tool_calls": 1,
+      "tool_validated_calls": 0,
+      "tool_rejected_calls": 1,
+      "tool_runtime_errors": 0,
+      "tool_results": 0,
+      "input_tokens": 80,
+      "output_tokens": 20,
+      "model_latency_ms": 0,
+      "estimated_model_cost_usd": 4.8e-05,
+      "failure_codes": [
+        "TOOL_NOT_ALLOWED"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "protocol_version": "2026-07-28",
+  "server_name": "Business Operations Policy",
+  "advertised_tools": [
+    "search_procurement_policy"
+  ],
+  "call": "search_procurement_policy",
+  "is_error": false,
+  "result_kind": "answer",
+  "citation_ids": [
+    "BR05",
+    "DP02",
+    "BR03"
+  ],
+  "harness_steps": [
+    {
+      "step": "retrieve",
+      "result_ids": [
+        "BR05",
+        "DP02",
+        "BR03"
+      ]
+    },
+    {
+      "step": "verify_citations",
+      "result": "PASS"
+    },
+    {
+      "step": "ground",
+      "result": "answer"
+    }
+  ]
+}

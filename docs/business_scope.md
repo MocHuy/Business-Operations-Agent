@@ -31,7 +31,11 @@ Business Procurement Agent hỗ trợ nhân viên yêu cầu mua thiết bị ch
 - Agent đề xuất phương án để Employee xác nhận.
 - Hệ thống tạo, submit và xử lý Approval cho PR.
 
-## Ngoài phạm vi MVP
+## Giao diện và ranh giới hiện tại
+
+React là giao diện được giữ lại cho luồng mua sắm: Trợ lý vận hành, danh sách/chi tiết yêu cầu và hộp thư phê duyệt gọi API Python. Các màn hình nghiệp vụ khác vẫn dùng Store/localStorage mô phỏng; không được xem kiểm quyền phía trình duyệt là kiểm quyền backend. Dữ liệu PR và ngân sách đã chi nằm trong SQLite của backend.
+
+## Ngoài phạm vi luồng backend Procurement đầu tiên
 
 - Finance
 - Director
@@ -40,7 +44,6 @@ Business Procurement Agent hỗ trợ nhân viên yêu cầu mua thiết bị ch
 - ERP integration
 - email
 - notification
-- React UI
 - LangGraph
 - multi-agent
 - RAG

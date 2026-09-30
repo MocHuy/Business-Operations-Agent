@@ -1,0 +1,7 @@
+[
+  {"id":"self_approval","query":"Nhân viên có được tự phê duyệt yêu cầu mua sắm của mình không?","relevant":["BR03"],"expected_top1":"BR03"},
+  {"id":"budget","query":"Mua hàng vượt ngân sách phòng ban thì sao?","relevant":["BR05","DP02"],"expected_top1":"BR05"},
+  {"id":"manager_scope","query":"Quản lý được duyệt yêu cầu với điều kiện gì?","relevant":["DP02"],"expected_top1":"DP02"},
+  {"id":"catalogue","query":"Sản phẩm ngoài danh mục có được mua không?","relevant":["BR06"],"expected_top1":"BR06"},
+  {"id":"out_of_domain","query":"Bảo hiểm nha khoa cho gia đình được chi trả như thế nào?","relevant":[],"expected_top1":null}
+]

@@ -33,6 +33,12 @@ const ProcuraStore = (function () {
     return new Intl.NumberFormat("vi-VN").format(amount) + " VND";
   }
 
+  function describeStatus(status) {
+    return ({ ACTIVE: 'đang hoạt động', PENDING: 'đang chờ', DISABLED: 'đã vô hiệu hóa',
+      DRAFT: 'bản nháp', PENDING_APPROVAL: 'chờ phê duyệt', APPROVED: 'đã phê duyệt',
+      REJECTED: 'đã từ chối', AVAILABLE: 'có sẵn', ASSIGNED: 'đã cấp phát' })[status] || 'không xác định';
+  }
+
   function getFromStorage(key, fallback) {
     try {
       if (typeof localStorage === "undefined") return fallback;
@@ -196,12 +202,12 @@ const ProcuraStore = (function () {
     }
 
     if (!matchedUser && !matchedAccount) {
-      return { success: false, error: "Tên đăng nhập không tồn tại trong hệ thống demo." };
+      return { success: false, error: "Tên đăng nhập không tồn tại trong hệ thống dùng thử." };
     }
 
     const expectedPass = (matchedAccount && matchedAccount.password) ? matchedAccount.password : "123";
     if (cleanPass !== expectedPass && cleanPass !== "123") {
-      return { success: false, error: "Mật khẩu không chính xác. Mật khẩu demo là 123." };
+      return { success: false, error: "Mật khẩu không chính xác. Mật khẩu dùng thử là 123." };
     }
 
     const userObj = matchedUser || {
@@ -217,13 +223,13 @@ const ProcuraStore = (function () {
     if (userObj.account_status === "DISABLED") {
       return {
         success: false,
-        error: "Tài khoản của bạn đã bị vô hiệu hóa bởi Quản trị viên hệ thống (SysAdmin). Vui lòng liên hệ IT để được hỗ trợ."
+        error: "Tài khoản của bạn đã bị quản trị hệ thống vô hiệu hóa. Vui lòng liên hệ bộ phận công nghệ thông tin để được hỗ trợ."
       };
     }
     if (userObj.account_status === "PENDING") {
       return {
         success: false,
-        error: "Tài khoản đang ở trạng thái chờ cấp phát và kích hoạt (PENDING). Vui lòng đợi Quản trị hệ thống phê duyệt."
+        error: "Tài khoản đang chờ cấp phát và kích hoạt. Vui lòng đợi quản trị hệ thống phê duyệt."
       };
     }
 
@@ -293,7 +299,7 @@ const ProcuraStore = (function () {
     const currentUser = requireAuthenticatedUser();
     const currentRole = (currentUser.system_role || currentUser.role || "").toUpperCase();
     if (currentRole !== "OPS_ADMIN" && currentRole !== "SYSTEM_ADMIN") {
-      throw new Error("Chỉ Quản trị viên (OPS_ADMIN hoặc SYSTEM_ADMIN) mới có quyền chuyển đổi tài khoản demo.");
+      throw new Error("Chỉ quản trị viên vận hành hoặc quản trị viên hệ thống mới có quyền chuyển đổi tài khoản dùng thử.");
     }
 
     const users = getFromStorage(STORAGE_KEYS.USERS, typeof INITIAL_USERS !== "undefined" ? INITIAL_USERS : {});
@@ -308,7 +314,7 @@ const ProcuraStore = (function () {
     }
 
     if (target.account_status !== "ACTIVE") {
-      throw new Error(`Không thể chuyển sang tài khoản có trạng thái [${target.account_status}]. Chỉ hỗ trợ chuyển sang tài khoản ACTIVE.`);
+      throw new Error(`Không thể chuyển sang tài khoản ở trạng thái ${describeStatus(target.account_status)}. Tài khoản phải đang hoạt động.`);
     }
 
     _setSessionUserInternal(target);
@@ -333,7 +339,7 @@ const ProcuraStore = (function () {
     const currentRole = (user.system_role || user.role || "").toUpperCase();
     const allowed = allowedRoles.map(r => String(r).toUpperCase());
     if (!allowed.includes(currentRole)) {
-      throw new Error(`Bạn không có quyền thực hiện thao tác này. Thao tác yêu cầu vai trò [${allowedRoles.join(", ")}], vai trò hiện tại là [${getRoleLabel(currentRole)}].`);
+      throw new Error(`Bạn không có quyền thực hiện thao tác này. Cần vai trò ${allowedRoles.map(getRoleLabel).join(' hoặc ')}; vai trò hiện tại là ${getRoleLabel(currentRole)}.`);
     }
     return user;
   }
@@ -342,7 +348,7 @@ const ProcuraStore = (function () {
     const user = requireAuthenticatedUser();
     if (user.system_role === "OPS_ADMIN") return user;
     if (!hasPermission(user.user_id, permission)) {
-      throw new Error(`Bạn không có quyền thực hiện thao tác này (yêu cầu quyền ${permission}).`);
+      throw new Error('Bạn không có quyền thực hiện thao tác này.');
     }
     return user;
   }
@@ -404,7 +410,7 @@ const ProcuraStore = (function () {
 
     if (permissionCode) {
       if (!hasAuthorityForDepartment(user.user_id, permissionCode, departmentId)) {
-        throw new Error(`Phòng ban ${departmentId} nằm ngoài phạm vi thẩm quyền [${permissionCode}] của bạn.`);
+        throw new Error(`Phòng ban ${departmentId} nằm ngoài phạm vi quyền của bạn.`);
       }
       return user;
     }
@@ -556,7 +562,7 @@ const ProcuraStore = (function () {
     }
 
     if (users[userId].account_status === "ACTIVE" && users[userId].username) {
-      throw new Error(`Nhân viên ${userId} đã có tài khoản hệ thống ACTIVE.`);
+      throw new Error(`Nhân viên ${userId} đã có tài khoản hệ thống đang hoạt động.`);
     }
 
     let username, email;
@@ -605,7 +611,7 @@ const ProcuraStore = (function () {
 
     const ALLOWED_STATUSES = ["PENDING", "ACTIVE", "DISABLED"];
     if (!ALLOWED_STATUSES.includes(status)) {
-      throw new Error(`Trạng thái tài khoản không hợp lệ [${status}]. Chỉ chấp nhận: PENDING, ACTIVE, DISABLED.`);
+      throw new Error('Trạng thái tài khoản không hợp lệ. Chỉ chấp nhận: đang chờ, đang hoạt động hoặc đã vô hiệu hóa.');
     }
 
     const users = getFromStorage(STORAGE_KEYS.USERS, typeof INITIAL_USERS !== "undefined" ? INITIAL_USERS : {});
@@ -641,7 +647,7 @@ const ProcuraStore = (function () {
     const ALLOWED_ROLES = ["EMPLOYEE", "MANAGER", "HR", "OPS_ADMIN", "SYSTEM_ADMIN"];
     if (system_role) {
       if (!ALLOWED_ROLES.includes(system_role)) {
-        throw new Error(`Vai trò hệ thống không hợp lệ: ${system_role}. Cho phép: ${ALLOWED_ROLES.join(", ")}`);
+        throw new Error(`Vai trò hệ thống không hợp lệ. Chỉ cho phép: ${ALLOWED_ROLES.map(getRoleLabel).join(', ')}.`);
       }
       users[userId].system_role = system_role;
       users[userId].role = system_role;
@@ -765,12 +771,12 @@ const ProcuraStore = (function () {
 
     const delegator = getUserById(from_user);
     if (!delegator || delegator.account_status !== "ACTIVE") {
-      throw new Error("Tài khoản người ủy quyền không tồn tại hoặc không ở trạng thái ACTIVE.");
+      throw new Error("Tài khoản người ủy quyền không tồn tại hoặc chưa hoạt động.");
     }
 
     const delegatee = getUserById(to_user);
     if (!delegatee || delegatee.account_status !== "ACTIVE") {
-      throw new Error("Tài khoản người được ủy quyền không tồn tại hoặc không ở trạng thái ACTIVE.");
+      throw new Error("Tài khoản người được ủy quyền không tồn tại hoặc chưa hoạt động.");
     }
 
     if (!Array.isArray(permissions) || permissions.length === 0) {
@@ -896,7 +902,7 @@ const ProcuraStore = (function () {
       return {
         allowed: false,
         code: "INVALID_STATE",
-        message: `Yêu cầu không ở trạng thái chờ phê duyệt (trạng thái hiện tại: ${request.status}).`
+        message: `Yêu cầu không ở trạng thái chờ phê duyệt (hiện tại: ${describeStatus(request.status)}).`
       };
     }
 
@@ -952,7 +958,7 @@ const ProcuraStore = (function () {
       return {
         allowed: false,
         code: "INVALID_STATE",
-        message: `Hồ sơ chi phí không ở trạng thái chờ phê duyệt (trạng thái hiện tại: ${claim.status}).`
+        message: `Hồ sơ chi phí không ở trạng thái chờ phê duyệt (hiện tại: ${describeStatus(claim.status)}).`
       };
     }
 
@@ -1246,7 +1252,7 @@ const ProcuraStore = (function () {
       throw new Error(`Không tìm thấy yêu cầu mua sắm: ${requestId}`);
     }
     if (req.status !== "DRAFT") {
-      throw new Error(`Không thể gửi yêu cầu ở trạng thái [${req.status}].`);
+      throw new Error(`Không thể gửi yêu cầu ở trạng thái ${describeStatus(req.status)}.`);
     }
 
     const currentUserId = user.user_id || user.id;
@@ -1279,7 +1285,7 @@ const ProcuraStore = (function () {
       throw new Error(`Không tìm thấy yêu cầu mua sắm: ${requestId}`);
     }
     if (req.status !== "PENDING_APPROVAL") {
-      throw new Error(`Không thể phê duyệt yêu cầu ở trạng thái [${req.status}].`);
+      throw new Error(`Không thể phê duyệt yêu cầu ở trạng thái ${describeStatus(req.status)}.`);
     }
 
     const check = canApprovePurchaseRequest(user.user_id, req);
@@ -1378,7 +1384,7 @@ const ProcuraStore = (function () {
   function assignAsset(assetId, employeeId) {
     const currentUser = requireAuthenticatedUser();
     if (currentUser.system_role !== "OPS_ADMIN" && !hasPermission(currentUser.user_id, "ASSIGN_ASSET")) {
-      throw new Error("Bạn không có quyền cấp phát tài sản công ty (yêu cầu quyền ASSIGN_ASSET).");
+      throw new Error("Bạn không có quyền cấp phát tài sản công ty.");
     }
 
     const assets = getAssets();
@@ -1386,7 +1392,7 @@ const ProcuraStore = (function () {
     if (!asset) throw new Error(`Không tìm thấy tài sản ${assetId}`);
 
     if (asset.status !== "AVAILABLE") {
-      throw new Error(`Tài sản hiện ở trạng thái [${asset.status}], chỉ tài sản AVAILABLE mới có thể cấp phát.`);
+      throw new Error(`Tài sản hiện ở trạng thái ${describeStatus(asset.status)}; chỉ tài sản có sẵn mới có thể cấp phát.`);
     }
 
     if (currentUser.system_role !== "OPS_ADMIN" && asset.department_id) {
@@ -1396,7 +1402,7 @@ const ProcuraStore = (function () {
     const users = getUsers();
     const employee = users.find(u => u.user_id === employeeId);
     if (!employee || employee.account_status !== "ACTIVE") {
-      throw new Error(`Nhân viên nhận tài sản ${employeeId} không tồn tại hoặc không ở trạng thái ACTIVE.`);
+      throw new Error(`Nhân viên nhận tài sản ${employeeId} không tồn tại hoặc chưa hoạt động.`);
     }
 
     if (currentUser.system_role !== "OPS_ADMIN") {
@@ -1425,7 +1431,7 @@ const ProcuraStore = (function () {
   function returnAsset(assetId) {
     const currentUser = requireAuthenticatedUser();
     if (currentUser.system_role !== "OPS_ADMIN" && !hasPermission(currentUser.user_id, "ASSIGN_ASSET")) {
-      throw new Error("Bạn không có quyền thu hồi tài sản công ty (yêu cầu quyền ASSIGN_ASSET).");
+      throw new Error("Bạn không có quyền thu hồi tài sản công ty.");
     }
 
     const assets = getAssets();
@@ -1433,7 +1439,7 @@ const ProcuraStore = (function () {
     if (!asset) throw new Error(`Không tìm thấy tài sản ${assetId}`);
 
     if (asset.status !== "ASSIGNED") {
-      throw new Error(`Tài sản hiện ở trạng thái [${asset.status}], chỉ tài sản ASSIGNED mới có thể thu hồi.`);
+      throw new Error(`Tài sản hiện ở trạng thái ${describeStatus(asset.status)}; chỉ tài sản đã cấp phát mới có thể thu hồi.`);
     }
 
     if (currentUser.system_role !== "OPS_ADMIN" && asset.department_id) {
@@ -1532,7 +1538,7 @@ const ProcuraStore = (function () {
     if (!claim) throw new Error(`Không tìm thấy hồ sơ chi phí: ${claimId}`);
 
     if (claim.status !== "DRAFT") {
-      throw new Error(`Không thể nộp hồ sơ ở trạng thái [${claim.status}].`);
+      throw new Error(`Không thể nộp hồ sơ ở trạng thái ${describeStatus(claim.status)}.`);
     }
 
     const currentUserId = user.user_id || user.id;
@@ -1541,7 +1547,7 @@ const ProcuraStore = (function () {
     }
 
     if (claim.amount > 500000 && claim.receipt_status !== "ATTACHED" && !claim.receipt_url && !claim.receipt_attached) {
-      throw new Error("POLICY_RESTRICTION: Chi phí vượt quá 500.000 VND bắt buộc phải đính kèm hóa đơn trước khi nộp duyệt (Chính sách Mục 5.1).");
+      throw new Error("Chi phí vượt quá 500.000 đồng bắt buộc phải đính kèm hóa đơn trước khi nộp duyệt (Quy định mục 5.1).");
     }
 
     const now = new Date();
@@ -1662,7 +1668,7 @@ const ProcuraStore = (function () {
   function createMeeting({ topic, systemId = null, systemName = null, timeSlot, dateTime, date_time, attendees, attendee_count, agenda }) {
     const user = requireAuthenticatedUser();
     if (user.system_role !== "OPS_ADMIN" && !hasPermission(user.user_id, "CREATE_MEETING")) {
-      throw new Error("Bạn không có quyền lên lịch hoặc điều phối cuộc họp (yêu cầu quyền CREATE_MEETING).");
+      throw new Error("Bạn không có quyền lên lịch hoặc điều phối cuộc họp.");
     }
 
     const now = new Date();
@@ -1920,7 +1926,7 @@ const ProcuraStore = (function () {
         resolvedEntityId = workingData.request_id;
       }
       if (!resolvedEntityId || !String(resolvedEntityId).trim()) {
-        throw new Error("Tạo văn bản FORM-PROC-001 yêu cầu mã yêu cầu mua sắm hợp lệ (relatedEntityId).");
+        throw new Error("Tạo văn bản theo mẫu FORM-PROC-001 cần mã yêu cầu mua sắm hợp lệ.");
       }
       const request = getRequestById(resolvedEntityId);
       if (!request) {
@@ -1958,7 +1964,7 @@ const ProcuraStore = (function () {
         resolvedEntityId = workingData.claim_id;
       }
       if (!resolvedEntityId || !String(resolvedEntityId).trim()) {
-        throw new Error("Tạo văn bản FORM-EXP-001 yêu cầu mã hồ sơ chi phí hợp lệ (relatedEntityId).");
+        throw new Error("Tạo văn bản theo mẫu FORM-EXP-001 cần mã hồ sơ chi phí hợp lệ.");
       }
       const claim = getExpenseById(resolvedEntityId);
       if (!claim) {

@@ -55,7 +55,8 @@ TOOL_SCHEMAS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "category": {"type": "string", "description": "Loại sản phẩm."},
+                    "category": {"type": "string", "enum": ["monitor", "laptop", "keyboard", "mouse"],
+                                 "description": "Mã loại trong catalogue: monitor=màn hình, laptop=máy tính xách tay, keyboard=bàn phím, mouse=chuột."},
                     "quantity": {"type": "integer", "description": "Số lượng cần mua."},
                     "specifications": {
                         "type": "string",

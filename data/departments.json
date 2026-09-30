@@ -4,5 +4,11 @@
   },
   "DEP002": {
     "name": "Marketing"
+  },
+  "DEP_HR": {
+    "name": "Human Resources"
+  },
+  "DEP_ADMIN": {
+    "name": "Operations Administration"
   }
 }

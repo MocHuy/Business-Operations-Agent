@@ -13,20 +13,20 @@ Agent xử lý theo ngữ cảnh:
 3. Gọi `search_products` với category `monitor`, quantity `5`, specification `27 inch` và giới hạn giá phù hợp.
 4. Đề xuất một hoặc các sản phẩm phù hợp, kèm tổng giá trị.
 5. Hỏi Employee xác nhận phương án.
-6. Sau khi xác nhận, gọi `create_purchase_request`.
-7. Gọi `submit_purchase_request`.
-8. Kết quả: PR ở trạng thái `PENDING_APPROVAL` để Manager xử lý.
+6. Sau khi xác nhận, backend kiểm lại giá, ngân sách, quyền và trạng thái đề xuất; tạo và gửi PR trong một transaction.
+7. Verifier đọc lại PR đã lưu: requester, department, product, quantity, giá và `PENDING_APPROVAL` phải khớp.
+8. Manager trong phạm vi phòng ban xác nhận phê duyệt hoặc từ chối; backend kiểm lại ngân sách khi phê duyệt và ghi audit.
 
 ## Nguyên tắc điều phối
 
-Các bước trên mô tả một flow điển hình, không phải thứ tự hard-code. Agent được quyền quyết định cần gọi tool nào dựa trên thông tin đã có, thông tin còn thiếu, quyền của user và trạng thái PR.
+Các bước đọc trên mô tả flow điển hình, không phải thứ tự hard-code. Model chọn các read tools trong allowlist và quyết định hỏi thêm hay đề xuất. Harness giữ checkpoint, giới hạn bước/thời gian/token, xác thực tool, kiểm quyền và verification. Model không được gọi mutation tools. Hai màn hình tạo thủ công của React có hai lần xác nhận riêng cho DRAFT và submit; nhánh Agent có một lần xác nhận trước create+submit nguyên tử.
 
-Agent phải hỏi bổ sung khi thiếu dữ liệu cần thiết; không tự suy đoán product, budget, quantity hoặc quyền hạn. Các hành động nhạy cảm phải qua Harness và phải có xác nhận/quyền phù hợp.
+Prompt yêu cầu model hỏi bổ sung khi thiếu dữ liệu. Harness chỉ chấp nhận đề xuất khi quantity là số nguyên dương, sản phẩm đã xuất hiện trong kết quả tìm kiếm và giá/ngân sách/quyền được kiểm lại; Harness chưa có bộ phân tích độc lập để chứng minh prompt đã mô tả đầy đủ thông số. Các hành động nhạy cảm phải qua backend và phải có xác nhận/quyền phù hợp.
 
 ## Nhánh lỗi tối thiểu
 
 - Thiếu thông tin: hỏi lại Employee trước khi tìm hoặc tạo PR.
-- Không có product phù hợp: thông báo rõ và đề nghị phương án khác nếu có.
+- Không có product phù hợp: verifier không chấp nhận đề xuất; model có thể hỏi thêm hoặc trả lỗi. Chưa có bộ gợi ý phương án thay thế bảo đảm bằng luật.
 - Không đủ budget: không tạo/submit PR vượt budget.
 - User không có quyền: từ chối thao tác và giải thích ngắn gọn.
 - PR không tồn tại hoặc đã kết thúc: không thực hiện thao tác tiếp theo.

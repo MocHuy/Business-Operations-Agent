@@ -1,0 +1,74 @@
+{
+  "summary": {
+    "cases": 5,
+    "mean_precision_at_3": 0.5333,
+    "mean_recall_at_3": 1.0,
+    "top1_correct": 5,
+    "citation_grounded": 4,
+    "answers_with_citations": 4,
+    "not_found_correct": 1
+  },
+  "cases": [
+    {
+      "id": "self_approval",
+      "retrieved": [
+        "BR03",
+        "BR02",
+        "BR04"
+      ],
+      "precision_at_3": 0.3333,
+      "recall_at_3": 1.0,
+      "top1_correct": true,
+      "citation_grounded": true,
+      "not_found_correct": null
+    },
+    {
+      "id": "budget",
+      "retrieved": [
+        "BR05",
+        "DP02",
+        "BR03"
+      ],
+      "precision_at_3": 0.6667,
+      "recall_at_3": 1.0,
+      "top1_correct": true,
+      "citation_grounded": true,
+      "not_found_correct": null
+    },
+    {
+      "id": "manager_scope",
+      "retrieved": [
+        "DP02",
+        "DP01",
+        "DP05"
+      ],
+      "precision_at_3": 0.3333,
+      "recall_at_3": 1.0,
+      "top1_correct": true,
+      "citation_grounded": true,
+      "not_found_correct": null
+    },
+    {
+      "id": "catalogue",
+      "retrieved": [
+        "BR06",
+        "BR05",
+        "BR01"
+      ],
+      "precision_at_3": 0.3333,
+      "recall_at_3": 1.0,
+      "top1_correct": true,
+      "citation_grounded": true,
+      "not_found_correct": null
+    },
+    {
+      "id": "out_of_domain",
+      "retrieved": [],
+      "precision_at_3": 1.0,
+      "recall_at_3": 1.0,
+      "top1_correct": true,
+      "citation_grounded": null,
+      "not_found_correct": true
+    }
+  ]
+}

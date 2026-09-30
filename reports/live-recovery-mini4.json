@@ -1,0 +1,27 @@
+{
+  "model": "solar-mini4",
+  "database": "temporary SQLite per trial",
+  "trials": [
+    {
+      "iteration": 1,
+      "checkpoint_valid": true,
+      "checkpoint_tokens": 1201,
+      "checkpoint_steps": 1,
+      "model_calls": 3,
+      "recovery_events": 1,
+      "attempt_kinds": [
+        "proposal"
+      ],
+      "final_error_code": null,
+      "request_rows": 1,
+      "approved": true,
+      "budget_matches_request": true,
+      "audit_actions": [
+        "CONFIRM_AGENT_PROPOSAL",
+        "APPROVE_REQUEST"
+      ],
+      "success": true
+    }
+  ],
+  "verified_recovery": true
+}

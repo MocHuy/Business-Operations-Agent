@@ -1,5 +1,7 @@
 BUSINESS OPERATIONS AGENT
 Trợ lý Agentic AI hỗ trợ vận hành nội bộ doanh nghiệp
+
+> Đây là đề cương thiết kế được viết qua nhiều giai đoạn. Mô tả trạng thái triển khai hiện hành nằm ở `docs/implementation_status.md`; các ví dụ tính năng bên dưới không mặc nhiên là chức năng đã được kiểm chứng.
 1. Tổng quan đề tài
 Business Operations Agent là một trợ lý Agentic AI hỗ trợ nhân viên và quản lý xử lý các công việc vận hành nội bộ bằng ngôn ngữ tự nhiên.
 Thay vì người dùng phải tự tìm đúng chức năng hoặc điền nhiều biểu mẫu, người dùng có thể mô tả mục tiêu như:
@@ -319,13 +321,11 @@ Git + GitHub
 
 ### Trạng thái triển khai frontend
 
-- `demoWeb/` là prototype Vanilla đã đóng băng làm tham chiếu UX và business rules. Regression suite đạt 26/26; năm lệnh `node --check` cho app, components, store, mock data và agent demo đều thành công.
-- `frontend/` dùng React + Vite, React Router với route guard theo nhóm vai trò, AuthContext với session localStorage demo và service layer gọi Store đã được kiểm chứng. Các thao tác phê duyệt được gom trong `approvalService`; các service khác xử lý nghiệp vụ mua sắm, chi phí, tài sản, cuộc họp, văn bản, chính sách và quyền truy cập. Quyền approval được xét từ effective authorities, gồm cả ủy quyền đang hiệu lực. CSS nền kế thừa `demoWeb/css/styles.css`.
+- `demoWeb/` không có trong worktree hiện tại. Các kết quả kiểm thử lịch sử về thư mục này không phải bằng chứng cho repository hiện hành.
+- `frontend/` dùng React + Vite, React Router và AuthContext. Phiên backend là bắt buộc khi đăng nhập; các màn hình Procurement và Agent Procurement gọi API Python. Các màn hình chi phí, tài sản, họp, biểu mẫu và quản trị tổ chức vẫn là demo dùng Store/localStorage, không được xem là đã có kiểm quyền backend.
 - Các route đã khai báo: `/login`, `/agent`, `/my-work`, `/procurement`, `/procurement/:id`, `/expenses`, `/expenses/:id`, `/assets`, `/meetings`, `/forms`, `/policies`, `/approvals`, `/organization`, `/catalogue`, `/activity`.
-- Các trang đã dựng: đăng nhập, Agent deterministic, công việc, procurement/expense có tạo và gửi, trang chi tiết, tài sản cấp phát/hoàn trả, cuộc họp có chọn người dự, biểu mẫu và preview có liên kết hồ sơ procurement/expense, quy định, phê duyệt, tổ chức/ủy quyền, catalogue và activity. HR cập nhật hồ sơ trong phạm vi nhân sự; OPS_ADMIN cấu hình vai trò, quyền, scope/hạn mức và ủy quyền; SYSTEM_ADMIN kích hoạt, vô hiệu hóa và cấp tài khoản demo.
-- Kiểm tra React: `npm run build` thành công; `npm run test` đạt 20/20 kiểm tra. Bộ kiểm tra bao gồm ACTIVE authentication, bất biến văn bản/email recipient/double send, self approval, quyền approval service, lọc quyền riêng tư, chặn truy cập tài liệu chéo người dùng, đăng nhập và render các route theo vai trò đại diện trong Happy DOM; có kiểm tra chuyển hướng sau logout, giới hạn route HR/System Admin và quyền phê duyệt ủy quyền. Đây là kiểm tra component tự động trong Happy DOM, kết hợp smoke test Chromium headless: ứng dụng tải module ESM, render màn hình đăng nhập, đăng nhập thành công bằng tài khoản demo `nhanvien1` và hiển thị workspace Agent tại `/agent`.
-- Agent React dùng deterministic intent routing và đọc policy, asset, product, budget, hệ thống và chủ sở hữu hệ thống đã đăng ký từ Store; hỗ trợ duyệt hồ sơ có kiểm tra quyền, tạo procurement theo catalogue/ngân sách, nhập tham chiếu chứng từ expense, chọn người dự họp từ system owner/technical owner và trách nhiệm trong dữ liệu, kiểm tra ngày và attendee tài khoản đang hoạt động, tra cứu policy, mở biểu mẫu nghỉ phép và chặn yêu cầu vượt ngân sách tính theo catalogue. Tác vụ nhạy cảm có xác nhận trước khi gọi service. Đây vẫn là Agent demo dựa trên luật từ khóa, chưa phải mô hình ngôn ngữ hoặc tích hợp lịch ngoài.
-- Enforcement ở frontend phục vụ prototype/demo parity. Đây là mô phỏng cục bộ dựa trên localStorage, không phải ranh giới bảo mật production. Backend Harness/API phải kiểm tra lại authentication, ownership, scope, hạn mức, ngân sách, workflow và human approval. Không đưa API key vào frontend.
+- Luồng Agent Procurement gọi Upstage qua `procurement_agent.py` ở backend, dùng model chọn read tools và Harness kiểm schema/quyền/ngân sách, lưu checkpoint, trace và xác minh đề xuất. Sau xác nhận, backend tạo/gửi PR; quản lý duyệt/từ chối qua API. Các intent ngoài Procurement vẫn dùng bộ định tuyến demo phía React.
+- Bộ kiểm tra hiện hành: Python `unittest` cho Store/Harness/API, React Vitest/Happy DOM và Vite build; số ca và kết quả từng lần chạy được ghi ở `docs/implementation_status.md`. Không lấy kết quả cũ của demoWeb làm hiện trạng.
 
 Đề cương yêu cầu agent có thể tích hợp API, database, file, CLI hoặc external service cùng cơ chế validation/error handling.
 

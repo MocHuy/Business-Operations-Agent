@@ -2,16 +2,64 @@
   "EMP001": {
     "name": "Nguyễn Văn An",
     "role": "EMPLOYEE",
-    "department_id": "DEP001"
+    "department_id": "DEP001",
+    "account_status": "ACTIVE",
+    "permissions": ["CREATE_PROCUREMENT", "SUBMIT_PROCUREMENT"],
+    "scope_department_ids": ["DEP001"],
+    "approval_limit": 0
   },
   "EMP002": {
     "name": "Trần Minh Bình",
     "role": "EMPLOYEE",
-    "department_id": "DEP002"
+    "department_id": "DEP002",
+    "account_status": "ACTIVE",
+    "permissions": ["CREATE_PROCUREMENT", "SUBMIT_PROCUREMENT"],
+    "scope_department_ids": ["DEP002"],
+    "approval_limit": 0
   },
   "MGR001": {
     "name": "Lê Thu Hà",
     "role": "MANAGER",
-    "department_id": "DEP001"
+    "department_id": "DEP001",
+    "account_status": "ACTIVE",
+    "permissions": ["CREATE_PROCUREMENT", "SUBMIT_PROCUREMENT", "APPROVE_PROCUREMENT", "VIEW_DEPARTMENT_WORK"],
+    "scope_department_ids": ["DEP001"],
+    "approval_limit": 50000000
+  },
+  "MGR_MKT_001": {
+    "name": "Đỗ Phương Thảo",
+    "role": "MANAGER",
+    "department_id": "DEP002",
+    "account_status": "ACTIVE",
+    "permissions": ["CREATE_PROCUREMENT", "SUBMIT_PROCUREMENT", "APPROVE_PROCUREMENT", "VIEW_DEPARTMENT_WORK"],
+    "scope_department_ids": ["DEP002"],
+    "approval_limit": 50000000
+  },
+  "HR001": {
+    "name": "Nguyễn Thu Hương",
+    "role": "HR",
+    "department_id": "DEP_HR",
+    "account_status": "ACTIVE",
+    "permissions": [],
+    "scope_department_ids": ["DEP_HR"],
+    "approval_limit": 0
+  },
+  "ADM001": {
+    "name": "Trương Công Quản",
+    "role": "OPS_ADMIN",
+    "department_id": "DEP_ADMIN",
+    "account_status": "ACTIVE",
+    "permissions": [],
+    "scope_department_ids": ["DEP_ADMIN"],
+    "approval_limit": 0
+  },
+  "SYSADM001": {
+    "name": "Phạm Quốc Minh",
+    "role": "SYSTEM_ADMIN",
+    "department_id": "DEP001",
+    "account_status": "ACTIVE",
+    "permissions": [],
+    "scope_department_ids": ["DEP001"],
+    "approval_limit": 0
   }
 }
